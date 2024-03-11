@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from crewai import Agent
 from crewai_tools.tools.base_tool import Tool
 from crewai_tools.tools.tool_registry.tool_registry import ToolRegistry
