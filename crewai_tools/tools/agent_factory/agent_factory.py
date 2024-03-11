@@ -3,7 +3,7 @@ from typing import Dict, List, Any, Optional
 from crewai import Agent
 from crewai_tools.tools.base_tool import Tool
 from crewai_tools.tools.tool_registry.tool_registry import ToolRegistry
-
+from langchain_community.llms.ollama import Ollama
 class AgentFactory:
     """
     Facilitates the creation of Agent instances from definitions stored in a JSON file,
@@ -38,12 +38,15 @@ class AgentFactory:
 
     def create_agent(self, agent_info: Dict[str, Any]) -> Agent:
         """Creates an Agent with the specified attributes and tools."""
-        agent = Agent(
-            role=agent_info['role'],
-            goal=agent_info['goal'],
-            backstory=agent_info['backstory'],
-            verbose=agent_info.get('verbose', False)
-        )
+        basic_attrs = {k: v for k, v in agent_info.items() if k in ["role", "goal", "backstory", "max_iter", "max_rpm", "verbose", "allow_delegation"]}
+        agent = Agent(**basic_attrs)
+
+        if "model_name" in agent_info:
+            agent.llm = Ollama(model=agent_info["model_name"])
+    
+        if "memory" in agent_info:
+            agent.memory = agent_info["memory"]
+
         if "tools" in agent_info:
             for tool_info in agent_info["tools"]:
                 tool_class = self.tool_registry.get(tool_info["type"])
