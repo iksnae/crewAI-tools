@@ -1,3 +1,4 @@
+import json
 from typing import Type, Dict, List, Optional
 from crewai_tools import Tool
 
@@ -15,9 +16,37 @@ class ToolRegistry:
         list_tools(): Returns a list of all registered tool names.
     """
 
-    def __init__(self):
-        """Initializes the ToolRegistry with an empty registry."""
+    def __init__(self, json_file: Optional[str] = None):
+        """
+        Initializes the ToolRegistry. Optionally loads initial tool definitions from a JSON file.
+
+        Parameters:
+            json_file (Optional[str]): The path to a JSON file containing tool definitions.
+                The JSON file should be an array of objects, each with a "name" and "tool_class" field.
+        """
         self._registry: Dict[str, Type[Tool]] = {}
+        if json_file:
+            self._load_tools_from_json(json_file)
+
+    def _load_tools_from_json(self, file_path: str) -> None:
+        """
+        Loads tool definitions from a JSON file and registers them.
+
+        Parameters:
+            file_path (str): The path to the JSON file containing tool definitions.
+        """
+        try:
+            with open(file_path, 'r') as file:
+                tools = json.load(file)
+                for tool in tools:
+                    # Assuming the tool_class is a string that matches a class name in the scope
+                    # This requires further logic to safely turn string into class reference
+                    tool_class = globals().get(tool['tool_class'])
+                    if tool_class and issubclass(tool_class, Tool):
+                        self.register(tool['name'], tool_class)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Failed to load tool definitions from {file_path}: {e}")
+
 
     def register(self, name: str, tool_class: Type[Tool]) -> None:
         """
