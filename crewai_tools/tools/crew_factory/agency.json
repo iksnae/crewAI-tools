@@ -1,0 +1,50 @@
+{
+    "agents": [
+      {
+        "role": "Senior social media analyst",
+        "goal": "Make the best research and analysis on content posted on social media to inform new content creation",
+        "backstory": "You're an expert social media analyst, specialized in technology, software engineering, AI, and startups. You work for the best personal branding agency in the world and are now doing research and analysis for a new customer trying to improve their personal LinkedIn presence.",
+        "verbose": true,
+        "model_name": "mistral",
+        "tools": []
+      },
+      {
+        "role": "LinkedIn Content Creator Specialist",
+        "goal": "Create the absolute best content plan possible optimized to help your customer.",
+        "backstory": "You're a Content Creator Specialist at an agency specialized in personal branding for startup and technology executives. You know everything about AI, software engineering, remote work, and startups. You're working on a new customer trying to improve their personal LinkedIn presence.",
+        "tools": [],
+        "model_name": "mixtral",
+        "verbose": true
+      }
+    ],
+    "crews": [
+      {
+        "name": "Content Creation Crew",
+        "agents": [
+          "Senior social media analyst",
+          "LinkedIn Content Creator Specialist"
+        ],
+        "tasks": [
+          {
+            "description": "Research trending topics on social media related to technology and startups.",
+            "agent": "Senior social media analyst"
+          },
+          {
+            "description": "Create a detailed content plan based on the research findings.",
+            "agent": "LinkedIn Content Creator Specialist"
+          }
+        ],
+        "process": "sequential",
+        "verbose": true,
+        "full_output": true,
+        "language": "en",
+        "manager_llm": null,
+        "function_calling_llm": null,
+        "config": null,
+        "max_rpm": 60,
+        "share_crew": false,
+        "step_callback": null
+      }
+    ]
+  }
+  
