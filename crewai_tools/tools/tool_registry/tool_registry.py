@@ -29,7 +29,7 @@ class ToolRegistry:
         self._registry: Dict[str, Type[BaseTool]] = {}
         if json_file:
             self._load_tools_from_json(json_file)
-            print(f'Registered {len(self.list_tools())} Tools')
+            print(f'Registered {len(self.list_tools())} Tool(s)')
 
     def _load_tools_from_json(self, file_path: str) -> None:
         """

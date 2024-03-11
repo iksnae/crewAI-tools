@@ -28,7 +28,7 @@ class AgentFactory:
         self.tool_registry: ToolRegistry = tool_registry
         self.json_path: str = json_path
         self.agents_data: List[Dict[str, Any]] = self.load_agents_data()
-        print(f'Registered {len(self.agents_data)} Agents')
+        print(f'Registered {len(self.agents_data)} Agent(s)')
 
     def load_agents_data(self) -> List[Dict[str, Any]]:
         """Loads and parses agent definitions from JSON."""

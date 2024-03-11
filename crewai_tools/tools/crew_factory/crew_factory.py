@@ -17,6 +17,7 @@ class CrewFactory:
         self.json_path = json_path
         self.agent_factory = agent_factory
         self.crews_data = self.load_crews_data()
+        print(f'Registered {len(self.crews_data)} Crew(s)')
 
     def load_crews_data(self) -> List[Dict[str, Any]]:
         """Loads and returns the crew configurations from the JSON file."""
@@ -34,18 +35,31 @@ class CrewFactory:
         Returns:
             Crew: An instantiated Crew object based on the provided configuration.
         """
-        # Assign agents to tasks
-        for task_info in crew_info.get("tasks", []):
-            agent_role = task_info.pop("agent", None)
-            if agent_role:
-                agent = self.agent_factory.get_agent_by_role(agent_role)
-                if agent:
-                    task_info["agent"] = agent
-                else:
-                    print(f"Agent with role {agent_role} not found.")
-        crew_info["tasks"] = [Task(**task_info) for task_info in crew_info.get("tasks", [])]
+        
+        # Attempt to match and create agents based on their roles specified in crew_info
+        agents = [self.agent_factory.get_agent_by_role(agent_role) for agent_role in crew_info.get("agents", [])]
 
-        # Use TypeAdapter for Crew instantiation
+        # Filter out None values if any agent was not found
+        agents = list(filter(None, agents))
+
+        if not agents:
+            print("Could not find specified agents for the crew.")
+            return None
+        
+        updated_tasks = []
+        for task_info in crew_info.get("tasks", []):
+            # Find the corresponding agent instance for each task
+            agent = next((agent for agent in agents if agent.role == task_info.get("agent")), None)
+            if agent:
+                task_info["agent"] = agent
+                updated_tasks.append(Task(**task_info))
+            else:
+                print(f"Agent with role {task_info.get('agent')} not found for tasks.")
+
+        # Ensure agents in crew_info are the instantiated Agent objects
+        crew_info["agents"] = agents
+        crew_info["tasks"] = updated_tasks
+
         try:
             crew_adapter = TypeAdapter(Crew)
             crew = crew_adapter.validate_python(crew_info)
