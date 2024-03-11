@@ -21,4 +21,6 @@ from .tools import (
 	XMLSearchTool,
 	YoutubeChannelSearchTool,
 	YoutubeVideoSearchTool,
+	AgentFactory,
+	ToolRegistry
 )
