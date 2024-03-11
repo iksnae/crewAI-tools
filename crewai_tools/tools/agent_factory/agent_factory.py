@@ -58,17 +58,17 @@ class AgentFactory:
         """Returns a list of all instantiated agents."""
         return [self.create_agent(agent_info) for agent_info in self.agents_data]
 
-    # def get_agent_by_role(self, role: str) -> Optional[Agent]:
-    #     """
-    #     Fetches a specific agent by its role.
+    def get_agent_by_role(self, role: str) -> Optional[Agent]:
+        """
+        Fetches a specific agent by its role.
 
-    #     Args:
-    #         role (str): The role of the agent to fetch.
+        Args:
+            role (str): The role of the agent to fetch.
 
-    #     Returns:
-    #         Optional[Agent]: An instantiated Agent object if found, otherwise None.
-    #     """
-    #     for agent_info in self.agents_data:
-    #         if agent_info['role'] == role:
-    #             return self.create_agent(agent_info)
-    #     return None
+        Returns:
+            Optional[Agent]: An instantiated Agent object if found, otherwise None.
+        """
+        for agent_info in self.agents_data:
+            if agent_info['role'] == role:
+                return self.create_agent(agent_info)
+        return None
