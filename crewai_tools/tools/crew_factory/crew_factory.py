@@ -3,6 +3,7 @@ from typing import Dict, List, Any
 from crewai import Crew, Process, Task
 from pydantic import TypeAdapter
 from ..agent_factory.agent_factory import AgentFactory
+from langchain_community.llms.ollama import Ollama
 
 class CrewFactory:
     """
@@ -58,11 +59,14 @@ class CrewFactory:
 
         # Ensure agents in crew_info are the instantiated Agent objects
         crew_info["agents"] = agents
-        crew_info["tasks"] = updated_tasks
+        crew_info["tasks"] = updated_tasks 
+        if crew_info["process"] == "hierarchical":
+            crew_info["manager_llm"] = Ollama(model="research-coordinator")
 
         try:
             crew_adapter = TypeAdapter(Crew)
             crew = crew_adapter.validate_python(crew_info)
+            
             return crew
         except Exception as e:
             print(f"Error creating crew: {e}")
