@@ -4,6 +4,16 @@ from crewai import Agent
 from crewai_tools.tools.base_tool import Tool
 from crewai_tools.tools.tool_registry.tool_registry import ToolRegistry
 from langchain_community.llms.ollama import Ollama
+
+
+class FactorizedAgent(Agent):
+    
+    def get_model_name(self) -> str:
+        return self.llm.model
+    
+    def whoami(self) -> str:
+        return f"{self.role}@{self.llm.model}"
+
 class AgentFactory:
     """
     Facilitates the creation of Agent instances from definitions stored in a JSON file,
@@ -36,10 +46,10 @@ class AgentFactory:
             data = json.load(file)
         return data.get('agents', [])
 
-    def create_agent(self, agent_info: Dict[str, Any]) -> Agent:
+    def create_agent(self, agent_info: Dict[str, Any]) -> FactorizedAgent:
         """Creates an Agent with the specified attributes and tools."""
         basic_attrs = {k: v for k, v in agent_info.items() if k in ["role", "goal", "backstory", "max_iter", "max_rpm", "verbose", "allow_delegation"]}
-        agent = Agent(**basic_attrs)
+        agent = FactorizedAgent(**basic_attrs)
 
         if "model_name" in agent_info:
             agent.llm = Ollama(model=agent_info["model_name"])
@@ -57,11 +67,11 @@ class AgentFactory:
                     print(f'no tool class found for {tool_class}')
         return agent
 
-    def get_all_agents(self) -> List[Agent]:
+    def get_all_agents(self) -> List[FactorizedAgent]:
         """Returns a list of all instantiated agents."""
         return [self.create_agent(agent_info) for agent_info in self.agents_data]
 
-    def get_agent_by_role(self, role: str) -> Optional[Agent]:
+    def get_agent_by_role(self, role: str) -> Optional[FactorizedAgent]:
         """
         Fetches a specific agent by its role.
 
